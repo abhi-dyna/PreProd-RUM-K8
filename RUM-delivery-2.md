@@ -1,5 +1,14 @@
+summary: Introduction to RUM
+id: RUM-Session2
+categories: scrum-intro
+environments: steplabs
+status: Published
+author: Abhinandan Anantha
+feedback link: mailto:d1-apac@dynatrace.com
+analytics account:
+<!-- ------------------------ -->
 # Install Dynatrace OneAgent Operator
-
+<!-- ------------------------ -->
 ## Pre-requisites
 Within your tenant, navigate to Deploy Dynatrace > Kubernetes  
 ![image](./assets/Dynatrace/Dynatrace-hub-Kubernetes.png)
@@ -21,6 +30,7 @@ Similarly, for "API Token" select "Create a new API token" and click to open in 
 *NOTE*:
 When selecting the permissions, make sure you have the Access problem and event feed, metrics, and topology under "API v1" setting enabled for the API token.
 
+<!-- ------------------------ -->
 ## Oneagent Operator Installation
 Dynatrace support multiple deployment strategies to install oneAgent Operator. We will use Helm approach.
 
@@ -91,8 +101,8 @@ Thank you for installing dynatrace-oneagent-operator.
 
 Your release is named dynatrace-oneagent-operator.
 ```
-
-# Start the sample-application
+<!-- ------------------------ -->
+## Start the sample-application
 To start the sample-application pods, navigate to `/home/ubuntu/k8s` folder.
 Under that folder you would be able to view the yaml files for front-end and mongodb deployment. In order to deploy the services and deployment, run the following commands:
 `kubectl apply -n dynatrace -f app-deployment.yaml`
@@ -144,8 +154,8 @@ Negative
 Negative
 : Official troubleshooting page could be found [here](https://www.dynatrace.com/support/help/technology-support/cloud-platforms/google-cloud-platform/google-kubernetes-engine/installation-and-operation/full-stack/troubleshoot-oneagent-on-google-kubernetes-engine/)
 
-
-# Accessing the application
+<!-- ------------------------ -->
+## Accessing the application
 Now, register an user on the application at http://<IP-address>:30005/register page with the following details:  
 **Name**: Guest User  
 **E-Mail Address**: guestuser@mybank.com  
@@ -156,5 +166,3 @@ Now, register an user on the application at http://<IP-address>:30005/register p
 As you have completed registering yourself on the application, now login into the app from http://<my-IP>:30005/login with the credentials as below:  
 **E-Mail Address**: guestuser@mybank.com  
 **Password**: GuestUser12@
-
-

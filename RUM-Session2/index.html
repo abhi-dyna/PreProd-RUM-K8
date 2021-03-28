@@ -1,0 +1,116 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Install Dynatrace OneAgent Operator</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="RUM-Session2"
+                  title="Install Dynatrace OneAgent Operator"
+                  environment="web"
+                  feedback-link="mailto:d1-apac@dynatrace.com">
+    
+      <google-codelab-step label="Pre-requisites" duration="0">
+        <p>Within your tenant, navigate to Deploy Dynatrace &gt; Kubernetes<br><img alt="image" src="img/2074b3805cb0af57.png"></p>
+<p>Further, click on &#34;Monitor Kubernetes&#34;.</p>
+<p>Now, from the drop-down, select the following config values: Now, click on  for &#34;PaaS Token&#34;, select &#34;Create a new PaaS token&#34; and click to open in a new window. Once navigated to the page, click on &#34;Generate Token&#34; to create a token.<br><img alt="image" src="img/9328a5c6799de910.png"></p>
+<p>Give an appropriate name say &#34;PaaS-k8s&#34; and copy the token value in a temporary file.</p>
+<p class="image-container"><img alt="image" src="img/7c92e5865a068bbe.png"></p>
+<p>Similarly, for &#34;API Token&#34; select &#34;Create a new API token&#34; and click to open in a new window.</p>
+<p class="image-container"><img alt="image" src="img/de2f71d7183bd4a7.png"></p>
+<p><em>NOTE</em>: When selecting the permissions, make sure you have the Access problem and event feed, metrics, and topology under &#34;API v1&#34; setting enabled for the API token.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Oneagent Operator Installation" duration="0">
+        <p>Dynatrace support multiple deployment strategies to install oneAgent Operator. We will use Helm approach.</p>
+<p>Use the following command to install Helm 3. <code>sudo snap install helm --classic</code></p>
+<ol type="1">
+<li>Once helm is installed, add Dynatrace OneAgent Helm repository as below:  <pre><code language="language-bash" class="language-bash">helm repo add dynatrace https://raw.githubusercontent.com/Dynatrace/helm-charts/master/repos/stable
+</code></pre>
+<ol type="1">
+<li>Create a namespace <em>dynatrace</em> which will hold the operator deployment and it&#39;s dependencies. To create the namespace, use the command as below: <code>bash<br>kubectl create namespace dynatrace<br></code></li>
+</ol>
+</li>
+<li>Now, create a values.yml with the text as below: &#34;`bash platform: &#34;kubernetes&#34; operator: image: &#34;&#34; oneagent: name: &#34;oneagent&#34; apiUrl: &#34;https://ENVIRONMENTID.live.dynatrace.com/api&#34; image: &#34;&#34; args:  <ul>
+<li>–set-app-log-content-access=true env: {} nodeSelector: {} labels: {} skipCertCheck: false disableAgentUpdate: false enableIstio: false dnsPolicy: &#34;&#34; resources: {} waitReadySeconds: null priorityClassName: &#34;&#34; serviceAccountName: &#34;&#34; proxy: &#34;&#34; trustedCAs: &#34;&#34; secret: apiToken: &#34;DYNATRACE_API_TOKEN&#34; paasToken: &#34;PLATFORM_AS_A_SERVICE_TOKEN&#34; <br><code>Replace the apiToken and paasToken configurables with the values retrieved earlier and set apiURL to point to your tenant.<br>For SaaS, configure apiUrl as https://<ENVIRONMENTID>.live.dynatrace.com/api , where ENVIRONMENTID is your tenant-id<br>For Managed cluster, use apiUrl as https://<my-server>/io/<ENVIRONMENTID>/api, where my-server is the domain name/ip of your server and ENVIRONMENTID is your managed environment<br>Once replaced, save the file.<br>4. Lastly, run the below command to apply the YAML</code><br>bash $ helm install dynatrace-oneagent-operator dynatrace/dynatrace-oneagent-operator -n dynatrace –values values.yaml &#34;`</li>
+</ul>
+</li>
+</ol>
+<p>If succesful, you will get a prompt similar to the below and you will see the host appearing when you click on <strong>Show Deployment status</strong></p>
+<pre><code language="language-bash" class="language-bash">NAME: dynatrace-oneagent-operator
+LAST DEPLOYED: Wed Mar 03 02:01:30 2021
+NAMESPACE: dynatrace
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+Thank you for installing dynatrace-oneagent-operator.
+
+Your release is named dynatrace-oneagent-operator.
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Start the sample-application" duration="0">
+        <p>To start the sample-application pods, navigate to <code>/home/ubuntu/k8s</code> folder. Under that folder you would be able to view the yaml files for front-end and mongodb deployment. In order to deploy the services and deployment, run the following commands: <code>kubectl apply -n dynatrace -f app-deployment.yamlkubectl apply -n dynatrace -f mongo-deployment.yamlkubectl apply -n dynatrace -f mongo-service.yamlkubectl apply -n dynatrace -f app-service.yaml</code> This would create the deployment and services for all components for the application.</p>
+<p>Now, in order to access the application from outside the k8s cluster, run the below command: <code>kubectl expose deployment/app --type=NodePort --name=model-app -n dynatrace --port 30005</code> This would create a service which will be accessible from outside the cluster using :30005.</p>
+<p>Verify the service is up and running as expected using command below. <br><code>kubectl describe service model-app -n dynatrace</code></p>
+<p class="image-container"><img alt="image" src="img/5146c9edc2c0803.png"></p>
+<h2 is-upgraded>⚠️ Troubleshooting steps</h2>
+<aside class="warning"><p>To <strong>check status of pods</strong>, run command below. You should get a <strong>Running</strong> as a return.<br><code>kubectl get pods -n dynatrace</code></p>
+</aside>
+<aside class="warning"><p>To <strong>check the logs</strong>, run command below.<br><code>kubectl logs -f deployment/dynatrace-oneagent-operator -n dynatrace</code></p>
+</aside>
+<aside class="warning"><p>To <strong>delete secrets</strong>, run command below. You might have included a wrong secret previously. <br><code>kubectl delete secret --all -n dynatrace</code></p>
+</aside>
+<aside class="warning"><p>To <strong>delete all pods</strong>, run command below. This will cycle through the pods and you will have new pod instances.<br><code>kubectl delete --all pods -n dynatrace</code></p>
+</aside>
+<aside class="warning"><p>To <strong>check status of deployments</strong>, run command below. You should get a <strong>Running</strong> as a return.<br><code>kubectl get deployments -n dynatrace</code></p>
+</aside>
+<aside class="warning"><p>To <strong>check status of services</strong>, run command below. You should get a <strong>Running</strong> as a return.<br><code>kubectl get deployments -n dynatrace</code></p>
+</aside>
+<aside class="warning"><p>To <strong>delete a service</strong>, run command below.<br><code>kubectl delete service <serviceName> -n dynatrace</code></p>
+</aside>
+<aside class="warning"><p>Official troubleshooting page could be found <a href="https://www.dynatrace.com/support/help/technology-support/cloud-platforms/google-cloud-platform/google-kubernetes-engine/installation-and-operation/full-stack/troubleshoot-oneagent-on-google-kubernetes-engine/" target="_blank">here</a></p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Accessing the application" duration="0">
+        <p>Now, register an user on the application at http://:30005/register page with the following details:<br><strong>Name</strong>: Guest User<br><strong>E-Mail Address</strong>: guestuser@mybank.com<br><strong>Password</strong>: GuestUser12@<br><strong>Name</strong>: 123456789<br><img alt="image" src="img/9551903912d90a90.png"></p>
+<p>As you have completed registering yourself on the application, now login into the app from http://:30005/login with the credentials as below:<br><strong>E-Mail Address</strong>: guestuser@mybank.com<br><strong>Password</strong>: GuestUser12@</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

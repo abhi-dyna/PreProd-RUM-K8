@@ -11,21 +11,21 @@ analytics account:
 <!-- ------------------------ -->
 ## Pre-requisites
 Within your tenant, navigate to Deploy Dynatrace > Kubernetes  
-![image](./assets/Dynatrace/Dynatrace-hub-Kubernetes.png)
+![image](./assets/rum/Dynatrace/Dynatrace-hub-Kubernetes.png)
 
 Further, click on "Monitor Kubernetes". 
 
 Now, from the drop-down, select the following config values:
 Now, click on  for "PaaS Token", select "Create a new PaaS token" and click to open in a new window. Once navigated to the page, click on "Generate Token" to create a token.  
-![image](./assets/Dynatrace/Dynatrace-hub-Kubernetes-02.png)
+![image](./assets/rum/Dynatrace/Dynatrace-hub-Kubernetes-02.png)
 
 Give an appropriate name say "PaaS-k8s" and copy the token value in a temporary file.
 
-![image](./assets/Dynatrace/PaaS-token.png)
+![image](./assets/rum/Dynatrace/PaaS-token.png)
 
 Similarly, for "API Token" select "Create a new API token" and click to open in a new window.
 
-![image](./assets/Dynatrace/API-token.png)
+![image](./assets/rum/Dynatrace/API-token.png)
 
 *NOTE*:
 When selecting the permissions, make sure you have the Access problem and event feed, metrics, and topology under "API v1" setting enabled for the API token.
@@ -118,7 +118,7 @@ This would create a service which will be accessible from outside the cluster us
 Verify the service is up and running as expected using command below. <br>
 `kubectl describe service model-app -n dynatrace`
 
-![image](./assets/CommandLine/expose-model-app.png)
+![image](./assets/rum/CommandLine/expose-model-app.png)
 
 
 ### ⚠️ Troubleshooting steps
